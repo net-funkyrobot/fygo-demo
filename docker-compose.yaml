@@ -12,7 +12,7 @@ services:
     environment:
       - DATABASE_URL
     volumes:
-      - demo:/demo
+      - ./demo:/demo
     ports:
       - "8000:8000"
     depends_on:
