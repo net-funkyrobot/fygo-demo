@@ -18,7 +18,7 @@ When you `cd` into the project directory Pyenv will switch to the `fygo-demo` vi
 
 ```
 pip install -r demo/requirements.txt
-pip install -r demo/requirements-dev.txt
+pip install -r demo/requirements_dev.txt
 ```
 
 This will resolve dependencies locally for code analysis in your IDE/editor.
@@ -36,6 +36,9 @@ docker-compose up
 docker-compose exec db sh
 su - postgres -c psql
 CREATE DATABASE demodb OWNER postgres;
+ALTER ROLE postgres SET client_encoding TO 'utf8';
+ALTER ROLE postgres SET default_transaction_isolation TO 'read committed';
+ALTER ROLE postgres SET timezone TO 'UTC';
 exit
 exit
 ```
@@ -58,3 +61,8 @@ docker-compose up
 Django server errors will be shown in the output.
 
 When you're finished, just Ctrl-C that process.
+
+
+## Production deployment
+
+Populate `demo/secrets/django_secret_key.txt` with some cryptographically strong secret key. This file is never added to VCS.

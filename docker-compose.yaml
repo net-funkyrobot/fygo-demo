@@ -1,6 +1,7 @@
 services:
   db:
     image: postgres
+    container_name: postgres_db
     environment: 
       - POSTGRES_DB=demodb
       - POSTGRES_USER=postgres
@@ -10,7 +11,7 @@ services:
     command: python manage.py runserver 0.0.0.0:8000
     container_name: django_runserver
     environment:
-      - DATABASE_URL
+      - DJANGO_SETTINGS_MODULE=demo.settings.local
     volumes:
       - ./demo:/demo
     ports:
