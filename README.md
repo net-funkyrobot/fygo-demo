@@ -62,7 +62,20 @@ Django server errors will be shown in the output.
 
 When you're finished, just Ctrl-C that process.
 
-
 ## Production deployment
 
 Populate `demo/secrets/django_secret_key.txt` with some cryptographically strong secret key. This file is never added to VCS.
+
+## Local development operations
+
+If you change Python dependencies you'll want to rebuild the web image:
+
+```
+docker-compose build web
+```
+
+To run tests:
+
+```
+docker-compose run -e DJANGO_SETTINGS_MODULE=demo.settings.test --no-deps --rm web sh -c './manage.py test'
+```

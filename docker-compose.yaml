@@ -2,12 +2,12 @@ services:
   db:
     image: postgres
     container_name: postgres_db
-    environment: 
+    environment:
       - POSTGRES_DB=demodb
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
   web:
-    build: . 
+    build: .
     command: python manage.py runserver 0.0.0.0:8000
     container_name: django_runserver
     environment:
