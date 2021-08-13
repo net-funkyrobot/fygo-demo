@@ -1,18 +1,24 @@
+from decimal import Decimal
 from django.db import models
 from django.conf import settings
 from enum import Enum
 
-# Specify in one place for consistency
-DECIMAL_KWARGS = {"max_digits": 9, "decimal_places": 2}  # Max 1M-1
+from .constants import DECIMAL_KWARGS
 
 
 class Account(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
-    balance = models.DecimalField(**DECIMAL_KWARGS)
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.PROTECT,
+    )
+    balance = models.DecimalField(**DECIMAL_KWARGS, default=Decimal(0))
 
 
 class Transaction(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.PROTECT,
+    )
     transaction_id = models.IntegerField()
     amount = models.DecimalField(**DECIMAL_KWARGS)
     created = models.DateTimeField()
@@ -25,7 +31,10 @@ class WithdrawalStatus(Enum):
 
 
 class WithdrawalRequest(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.PROTECT,
+    )
     amount = models.DecimalField(**DECIMAL_KWARGS)
     created = models.DateTimeField(auto_now_add=True)
     processed = models.CharField(
