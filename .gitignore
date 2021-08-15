@@ -47,3 +47,5 @@ venv.bak/
 # Production secrets (but keep directory)
 demo/secrets/*
 !demo/secrets/.gitkeep
+
+.vscode
