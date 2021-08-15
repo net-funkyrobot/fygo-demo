@@ -20,3 +20,7 @@ class TransactionWebhookSerializer(serializers.Serializer):
     transaction_id = serializers.IntegerField()
     amount = serializers.DecimalField(**DECIMAL_KWARGS)
     created = serializers.DateTimeField()
+
+
+class WithdrawalRequestSerializer(serializers.Serializer):
+    amount = serializers.DecimalField(**DECIMAL_KWARGS)

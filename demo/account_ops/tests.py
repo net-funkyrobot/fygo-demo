@@ -63,7 +63,7 @@ class AccountOpsIntegrationTest(TestCase):
         account1 = Account.objects.get(user_id=user1.id)
 
         self.assertEqual(
-            Transaction.objects.filter(user_id=user1.id).count(),
+            Transaction.objects.filter(account_id=user1.account.id).count(),
             0,
         )
         self.assertEqual(account1.balance, Decimal(0))
@@ -83,7 +83,7 @@ class AccountOpsIntegrationTest(TestCase):
             self.assertEqual(response.status_code, 200, response.data)
 
         self.assertEqual(
-            Transaction.objects.filter(user_id=user1.id).count(),
+            Transaction.objects.filter(account_id=user1.account.id).count(),
             25,
         )
 
@@ -100,7 +100,7 @@ class AccountOpsIntegrationTest(TestCase):
         user1 = User.objects.create_user("user1", password="testpassword")
 
         self.assertEqual(
-            Transaction.objects.filter(user_id=user1.id).count(),
+            Transaction.objects.filter(account_id=user1.account.id).count(),
             0,
         )
 
@@ -143,7 +143,7 @@ class AccountOpsIntegrationTest(TestCase):
         response = client.get("/account/balance/")
         self.assertEqual(
             response.data.get("balance"),
-            "0.00",
+            Decimal(0.00),
             response.data,
         )
 
@@ -162,6 +162,44 @@ class AccountOpsIntegrationTest(TestCase):
         response = client.get("/account/balance/")
         self.assertEqual(
             response.data.get("balance"),
-            "37.50",
+            Decimal(37.50),
             response.data,
         )
+
+    def test_create_withdrawal_request(self):
+        User = get_user_model()
+        user1 = User.objects.create_user("user1", password="testpassword")
+
+        client = APIClient()
+        client.force_authenticate(user1)
+
+        response = client.get("/account/balance/")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            response.data.get("balance"),
+            Decimal(0.00),
+            response.data,
+        )
+
+        response = client.post(
+            "/account/request-withdrawal/",
+            {"amount": "5.00"},
+        )
+        self.assertEqual(response.status_code, 400)
+
+        response = client.post(
+            "/account/transactions-webhook/",
+            {
+                "user_id": user1.id,
+                "transaction_id": "1",
+                "amount": Decimal(35.00),
+                "created": datetime.now(),
+            },
+        )
+        self.assertEqual(response.status_code, 200, response.data)
+
+        response = client.post(
+            "/account/request-withdrawal/",
+            {"amount": "5.00"},
+        )
+        self.assertEqual(response.status_code, 200)
