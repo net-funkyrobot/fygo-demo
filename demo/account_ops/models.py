@@ -23,13 +23,14 @@ class Account(models.Model):
         Returns balance minus any active withdrawal amount
         Note: use with prefetch_related to optimise queries
         """
-        withdrawal = self.withdrawal_requests.filter(
+        withdrawals = self.withdrawal_requests.filter(
             status=WithdrawalStatus.open,
         )
-        if len(withdrawal) == 0:
+        if len(withdrawals) == 0:
             return self.internal_balance
         else:
-            return self.internal_balance - withdrawal.amount
+            withdrawal_total = sum(map(lambda w: w.amount, withdrawals))
+            return self.internal_balance - withdrawal_total
 
 
 class Transaction(models.Model):

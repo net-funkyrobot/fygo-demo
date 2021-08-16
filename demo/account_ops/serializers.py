@@ -4,9 +4,11 @@ from .models import Account, Transaction
 
 
 class AccountBalanceSerializer(serializers.ModelSerializer):
+    balance = serializers.DecimalField(**DECIMAL_KWARGS)
+
     class Meta:
         model = Account
-        fields = ["balance"]
+        fields = ["balance", "internal_balance"]
 
 
 class TransactionSerializer(serializers.ModelSerializer):

@@ -143,7 +143,7 @@ class AccountOpsIntegrationTest(TestCase):
         response = client.get("/account/balance/")
         self.assertEqual(
             response.data.get("balance"),
-            Decimal(0.00),
+            "0.00",
             response.data,
         )
 
@@ -162,7 +162,31 @@ class AccountOpsIntegrationTest(TestCase):
         response = client.get("/account/balance/")
         self.assertEqual(
             response.data.get("balance"),
-            Decimal(37.50),
+            "37.50",
+            response.data,
+        )
+        response = client.get("/account/balance/")
+        self.assertEqual(
+            response.data.get("internal_balance"),
+            "37.50",
+            response.data,
+        )
+
+        response = client.post(
+            "/account/request-withdrawal/",
+            {"amount": "7.50"},
+        )
+        self.assertEqual(response.status_code, 200)
+
+        response = client.get("/account/balance/")
+        self.assertEqual(
+            response.data.get("balance"),
+            "30.00",
+            response.data,
+        )
+        self.assertEqual(
+            response.data.get("internal_balance"),
+            "37.50",
             response.data,
         )
 
@@ -177,7 +201,7 @@ class AccountOpsIntegrationTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
             response.data.get("balance"),
-            Decimal(0.00),
+            "0.00",
             response.data,
         )
 

@@ -22,13 +22,13 @@ from .serializers import (
 
 
 class BalanceAPIView(RetrieveAPIView):
-    queryset = Account.objects.all()
+    queryset = Account.objects.all().prefetch_related("withdrawal_requests")
     serializer_class = AccountBalanceSerializer
 
     def get_object(self):
         return get_object_or_404(
-            self.get_queryset().prefetch_related("withdrawal_requests"),
-            user_id=self.request.user.id,
+            self.get_queryset(),
+            id=self.request.user.account.id,
         )
 
 
@@ -74,7 +74,7 @@ def create_withdrawal_request(request):
     if serializer.is_valid(raise_exception=True):
         data = serializer.validated_data
         account = Account.objects.prefetch_related("withdrawal_requests").get(
-            user_id=request.user.id
+            id=request.user.account.id
         )
 
         if account.balance - data["amount"] >= Decimal(0):
