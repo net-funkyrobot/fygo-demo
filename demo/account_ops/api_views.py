@@ -2,7 +2,6 @@ from decimal import Decimal
 from django.contrib.auth import get_user_model
 from django.db import transaction
 from django.db.models import F
-from django.db.models.query import prefetch_related_objects
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.generics import (
